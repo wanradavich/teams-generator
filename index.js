@@ -1,27 +1,28 @@
 const players = []; // Populate this array with player objects
 function generateTeams(players) {
-    players.sort(() => Math.random() - 0.5);
+  players.sort(() => Math.random() - 0.5);
 
-    const advancedPlayers = players.filter(player => player.skill === 'advanced');
-    const beginnerPlayers = players.filter(player => player.skill === 'beginner');
-    
+  const skillLevels = ['advanced', 'upper-intermediate', 'intermediate', 'upper-beginner', 'beginner'];
+  const playersBySkill = skillLevels.map(skill => players.filter(player => player.skill === skill));
 
-    const totalTeams = Math.ceil(players.length / 4);
-    const teams = new Array(totalTeams).fill().map(() => []);
+  const totalTeams = Math.ceil(players.length / 4);
+  const teams = new Array(totalTeams).fill().map(() => []);
 
-    const distributePlayers = (playerArray) => {
-        let index = 0;
-        for (let i = 0; i < playerArray.length; i++) {
-            teams[index].push(playerArray[i]);
-            index = (index + 1) % totalTeams;
-        }
-    };
+  let index = 0;
+  let skillIndex = 0;
 
-    distributePlayers(advancedPlayers);
-    distributePlayers(beginnerPlayers);
+  while (playersBySkill.some(skill => skill.length > 0)) {
+      if (playersBySkill[skillIndex % skillLevels.length].length > 0) {
+          teams[index % totalTeams].push(playersBySkill[skillIndex % skillLevels.length].pop());
+          index++;
+      }
+      skillIndex++;
+  }
 
-    return teams;
+  return teams;
 }
+
+
 
   // Function to shuffle an array (Fisher-Yates shuffle algorithm)
   function shuffleArray(array) {
